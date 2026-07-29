@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bank of Ceylon Interface</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --boc-yellow: #ffcc00;
+      --top-bar-bg: #0d1419;
+      --bg-gray: #f8f9fa;
+      --text-main: #212529;
+      --text-muted: #6c757d;
+      --card-radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-gray);
+      overflow-x: hidden;
+    }
+
+    /* --- Top Utility Bar --- */
+    .top-utility-bar {
+      background-color: var(--top-bar-bg);
+      color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 5%;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .top-nav-left, .top-nav-right {
+      display: flex;
+    align-items: center;
+    gap: 12px;
+    }
+    .branch-name {
+  color: var(--boc-yellow);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.top-bar-divider {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 12px;
+}
+
+.top-nav-contact {
+  color: #d1d5db;
+  text-decoration: none;
+  font-size: 12.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+}
+
+.top-nav-contact:hover {
+  color: var(--boc-yellow);
+}
+
+.top-nav-contact i {
+  color: var(--boc-yellow);
+  font-size: 12px;
+}
+
+    .top-nav-secondary {
+      font-weight: 400;
+      font-size: 12.5px;
+      color: #d1d5db;
+    }
+
+    .flag-selector {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .flag-icon {
+      width: 20px;
+      height: 14px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #8b0000 30%, #ffcc00 30%, #ffcc00 35%, #006600 35%);
+      display: inline-block;
+    }
+
+    .lang-switcher span {
+      margin-left: 6px;
+      cursor: pointer;
+      color: #d1d5db;
+      font-size: 12.5px;
+    }
+
+    .lang-switcher span:hover, .lang-switcher span.active {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    /* --- Header --- */
+    header {
+       background-color: #ffffff;
+      border-bottom: 3px solid var(--boc-yellow);
+      display: flex;
+      justify-content: center; /* Centers the logo horizontally */
+      align-items: center;
+      padding: 12px 5%;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05)
+     }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .menu-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 6px;
+    }
+
+    .logo-placeholder {
+      font-weight: 800;
+      font-size: 20px;
+      color: #000;
+      text-align: center;
+    }
+
+    .logo-placeholder span {
+      background-color: var(--boc-yellow);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    .header-actions {
+      display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    }
+    .logo-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .header-logo-img {
+   height: 55px; /* Adjust logo height as needed */
+    width: auto;
+    display: block;
+    object-fit: contain;
+  }
+
+    .btn-cta {
+      border: none;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-apply { background-color: #0d1419; color: #ffffff; }
+    .btn-online { background-color: var(--boc-yellow); color: #000000; }
+
+    /* --- Hero Slider --- */
+    .hero-slider-wrapper {
+      position: relative;
+      width: 100%;
+      min-height: 420px;
+      overflow: hidden;
+      background: radial-gradient(circle at 60% 50%, #00ffff22 0%, #051923 40%, #020b10 100%);
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.6s ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 30px 8%;
+      color: #ffffff;
+      z-index: 1;
+      gap: 20px;
+    }
+
+    .slide.active {
+      opacity: 1;
+      z-index: 2;
+    }
+
+    .hero-content {
+      max-width: 500px;
+      flex: 1;
+    }
+
+    .hero-title {
+      font-size: clamp(22px, 5vw, 34px);
+      font-weight: 800;
+      line-height: 1.2;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(13px, 3vw, 15px);
+      color: #d1d5db;
+      margin-bottom: 20px;
+    }
+
+    .btn-find-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background-color: #ffffff;
+      color: #000000;
+      padding: 10px 20px;
+      font-weight: 700;
+      font-size: 13px;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+
+    .hero-image-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-width: 380px;
+    }
+
+    .hero-image-wrapper img {
+      max-width: 100%;
+      max-height: 320px;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.4));
+    }
+
+    .slider-dots {
+      position: absolute;
+      bottom: 20px;
+      left: 8%;
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      background-color: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      width: 28px;
+      background-color: var(--boc-yellow);
+      border-radius: 10px;
+    }
+
+    .slider-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.4);
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      cursor: pointer;
+      z-index: 10;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .slider-arrow:hover { background: rgba(0, 0, 0, 0.8); }
+    .arrow-left { left: 10px; }
+    .arrow-right { right: 10px; }
+
+    /* --- Section Header --- */
+    .section-header {
+      text-align: center;
+      padding: 30px 20px 15px 20px;
+    }
+
+    .section-header h2 {
+      font-size: clamp(20px, 4vw, 26px);
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    /* --- Products Section (STRICT 3-CARD GRID) --- */
+    .products-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px 50px 20px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr)); /* Force strict 3 columns on desktop */
+      gap: 25px;
+    }
+
+    .boc-card {
+      background: #ffffff;
+      border-radius: var(--card-radius);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      width: 100%;
+    }
+
+    .boc-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-img-wrapper {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      background-color: #e9ecef;
+      overflow: hidden;
+      border-top-left-radius: var(--card-radius);
+      border-top-right-radius: var(--card-radius);
+    }
+
+    .card-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card-content {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 14px;
+    }
+
+    .card-list {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+
+    .card-list li {
+      font-size: 14px;
+      color: #333;
+      padding: 5px 0;
+      font-weight: 500;
+    }
+
+    .card-footer {
+      padding: 0 20px 20px 20px;
+    }
+
+    .view-all-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .view-all-btn:hover {
+      color: #000000;
+    }
+
+    /* Floating elements */
+    .floating-badge {
+      position: fixed;
+      left: 10px;
+      bottom: 15px;
+      width: 50px;
+      height: 50px;
+      z-index: 100;
+    }
+
+    .ai-assist-btn {
+      position: fixed;
+      right: 15px;
+      bottom: 15px;
+      background-color: var(--boc-yellow);
+      color: #000;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 8px 14px;
+      border-radius: 20px 20px 4px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 100;
+      cursor: pointer;
+    }
+    /* --- Call Centre Footer Section --- */
+  .call-centre-section {
+    background-color: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    padding: 40px 5%;
+    margin-top: 40px;
+  }
+
+  .call-centre-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .call-centre-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+  }
+
+  .call-centre-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 3px solid #1a1a1a;
+    border-radius: 20px 8px 8px 8px;
+    padding: 6px 14px;
+    width: fit-content;
+    margin-bottom: 25px;
+    background-color: #ffffff;
+  }
+
+  .call-centre-logo-phone {
+    font-size: 28px;
+    color: #1a1a1a;
+  }
+
+  .call-centre-logo-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .call-centre-logo-number {
+    background-color: var(--boc-yellow);
+    font-size: 20px;
+    font-weight: 900;
+    padding: 0 6px;
+    border-radius: 3px;
+    line-height: 1.1;
+    color: #000;
+  }
+
+  .call-centre-logo-sub {
+    font-size: 11px;
+    font-weight: 800;
+    color: #000;
+    letter-spacing: 0.5px;
+  }
+
+  .contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .contact-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .icon-phone { background-color: #6f42c1; }
+  .icon-whatsapp { background-color: #25d366; }
+  .icon-messenger { background: linear-gradient(45deg, #0084ff, #a033ff, #ff5252); }
+  .icon-email { background-color: #f59e0b; }
+
+  .contact-details {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    color: #212529;
+  }
+
+  .contact-details strong {
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .contact-subtext {
+    font-size: 13px;
+    color: #495057;
+    margin-top: 2px;
+  }
+  /* --- Promotional Ads Section --- */
+.ads-section {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.ads-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 25px;
+  position: relative;
+}
+
+.ads-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background-color: var(--boc-yellow);
+  margin: 8px auto 0 auto;
+  border-radius: 2px;
+}
+
+.ads-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  justify-content: center;
+}
+
+.ad-card {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ad-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.ad-card img {
+  width: 100%;
+  height: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  display: block;
+}
+
+      /* --- Responsive Breakpoints --- */
+      @media (max-width: 992px) {
+        .products-container {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 768px) {
+        .top-utility-bar { justify-content: center; text-align: center; }
+        .top-nav-left, .top-nav-right { justify-content: center; width: 100%; gap: 10px; }
+        header { padding: 10px 15px; }
+        .logo-placeholder { font-size: 16px; }
+        .btn-cta { padding: 6px 10px; font-size: 11px; }
+        .hero-slider-wrapper { min-height: 380px; }
+        .slide { flex-direction: column-reverse; justify-content: center; text-align: center; padding: 20px 12%; }
+        .hero-image-wrapper { max-width: 180px; margin-bottom: 10px; }
+        .hero-image-wrapper img { max-height: 150px; }
+        .btn-find-more { margin: 0 auto; }
+        .slider-arrow { padding: 8px 10px; }
+      }
+
+      @media (max-width: 600px) {
+        .products-container {
+          grid-template-columns: 1fr;
+          padding: 0 15px 40px 15px;
+        }
+        .top-nav-secondary { display: none; }
+        .hero-title { font-size: 20px; }
+        .hero-subtitle { font-size: 12px; margin-bottom: 15px; }
+        .btn-find-more { padding: 8px 14px; font-size: 12px; }
+      }
+
+  </style>
+</head>
+<body>
+
+  <!-- Top Utility Bar -->
+  <!-- Top Utility Bar -->
+<div class="top-utility-bar">
+  <div class="top-nav-left">
+    <span class="branch-name">BOC NARAMMALA</span>
+    <span class="top-bar-divider">|</span>
+    <a href="tel:+94372249280" class="top-nav-contact">
+      <i class="fa-solid fa-phone"></i> +94 37 224 9280
+    </a>
+    <span class="top-bar-divider">|</span>
+    <a href="mailto:boc534@boc.lk" class="top-nav-contact">
+      <i class="fa-solid fa-envelope"></i> boc534@boc.lk
+    </a>
+  </div>
+
+  
+</div>
+
+  <!-- Header -->
+   <!-- Centered Logo Header -->
+  <header>
+    
+
+    <!-- Perfectly Centered Logo -->
+    <div class="logo-wrapper">
+      
+        <img src="bochead.png" alt="Bank of Ceylon - Bankers to the Nation" class="header-logo-img">
+    </div>
+
+    
+  </header>
+
+  <!-- Hero Slider -->
+  <div class="hero-slider-wrapper">
+    <div class="slide active">
+      <div class="hero-content">
+        <h1 class="hero-title">Banking App<br>Recognised Globally</h1>
+        <p class="hero-subtitle">Digital CX Awards 2026 - THE DIGITAL BANKER</p>
+      </div>
+      <div class="hero-image-wrapper">
+        <img src="media1.png" alt="Digital CX Awards Winner">
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="hero-content">
+        <h1 class="hero-title">BOC FLEX Tap & Pay</h1>
+        <p class="hero-subtitle">Your Phone is Now Your Wallet</p>
+      </div>
+      <div class="hero-image-wrapper">
+        <img src="media2.png" alt="BOC Flex Tap and Pay">
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="hero-content">
+        <h1 class="hero-title">TEA WITH BOC</h1>
+        <p class="hero-subtitle">Empower your next step as an achiever</p>
+      </div>
+      <div class="hero-image-wrapper">
+        <img src="tea.jpeg" alt="BOC Flex Tap and Pay">
+      </div>
+    </div>
+
+    <button class="slider-arrow arrow-left" id="prevSlide" aria-label="Previous Slide"><i class="fa-solid fa-chevron-left"></i></button>
+    <button class="slider-arrow arrow-right" id="nextSlide" aria-label="Next Slide"><i class="fa-solid fa-chevron-right"></i></button>
+
+    <div class="slider-dots">
+      <div class="dot active" data-index="0"></div>
+      <div class="dot" data-index="1"></div>
+      <div class="dot" data-index="2"></div>
+    </div>
+  </div>
+
+  <!-- Section Title -->
+  <div class="section-header">
+    <h2>Products and services to make banking easy</h2>
+  </div>
+
+  <!-- 3-CARD GRID CONTAINER -->
+  <div class="products-container">
+
+    <!-- Card 1: Savings Accounts (Dual QR Codes for Android & iOS) -->
+    <div class="boc-card">
+      <div class="card-img-wrapper">
+        <img src="Flex.jpeg" alt="Savings Family">
+      </div>
+      <div class="card-content">
+        <h2 class="card-title">BOC FLEX</h2>
+        
+        <!-- Dual QR Code Wrapper -->
+        <div style="display: flex; justify-content: center; gap: 10px; margin: 10px 0; align-items: center;">
+          <!-- Android QR -->
+          <div style="background: #ffffff; padding: 8px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center; flex: 1;">
+            <a href="flexandro.pdf" target="_blank">
+              <img src="bocFLEXA.png" alt="Android QR Code" style="width: 75px; height: 75px; display: block; margin: 0 auto; object-fit: contain;" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Android';">
+            </a>
+            <span style="display: block; font-size: 11px; font-weight: 700; color: #333; margin-top: 4px;">
+              <i class="fa-brands fa-android" style="color: #3DDC84;"></i> Android
+            </span>
+          </div>
+
+          <!-- iOS QR -->
+          <div style="background: #ffffff; padding: 8px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center; flex: 1;">
+            <a href="flexandro.pdf" target="_blank">
+              <img src="bocFLEXI.png" alt="iOS QR Code" style="width: 75px; height: 75px; display: block; margin: 0 auto; object-fit: contain;" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=iOS';">
+            </a>
+            <span style="display: block; font-size: 11px; font-weight: 700; color: #333; margin-top: 4px;">
+              <i class="fa-brands fa-apple" style="color: #000;"></i> iOS
+            </span>
+          </div>
+        </div>
+
+      </div>
+      
+    </div>
+
+    <!-- Card 2: Current Accounts -->
+    <div class="boc-card">
+      <div class="card-img-wrapper">
+        <img src="PassBook.jpeg" alt="Savings Family">
+      </div>
+      <div class="card-content">
+        <h2 class="card-title">BOC Smart PASSBOOK</h2>
+        
+        <!-- Dual QR Code Wrapper -->
+        <div style="display: flex; justify-content: center; gap: 10px; margin: 10px 0; align-items: center;">
+          <!-- Android QR -->
+          <div style="background: #ffffff; padding: 8px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center; flex: 1;">
+            <a href="flexandro.pdf" target="_blank">
+              <img src="passA.png" alt="Android QR Code" style="width: 75px; height: 75px; display: block; margin: 0 auto; object-fit: contain;" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Android';">
+            </a>
+            <span style="display: block; font-size: 11px; font-weight: 700; color: #333; margin-top: 4px;">
+              <i class="fa-brands fa-android" style="color: #3DDC84;"></i> Android
+            </span>
+          </div>
+
+          <!-- iOS QR -->
+          <div style="background: #ffffff; padding: 8px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center; flex: 1;">
+            <a href="flexandro.pdf" target="_blank">
+              <img src="passI.png" alt="iOS QR Code" style="width: 75px; height: 75px; display: block; margin: 0 auto; object-fit: contain;" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=iOS';">
+            </a>
+            <span style="display: block; font-size: 11px; font-weight: 700; color: #333; margin-top: 4px;">
+              <i class="fa-brands fa-apple" style="color: #000;"></i> iOS
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    
+
+    <!-- Card 3: Term Deposits -->
+    <div class="boc-card">
+      <div class="card-img-wrapper">
+        <img src="smartpay.jpeg" alt="Savings Family">
+      </div>
+      <div class="card-content">
+        <h2 class="card-title">Smart Pay</h2>
+        
+        <!-- Dual QR Code Wrapper -->
+        <div style="display: flex; justify-content: center; gap: 10px; margin: 10px 0; align-items: center;">
+          <!-- Android QR -->
+          <div style="background: #ffffff; padding: 8px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center; flex: 1;">
+            <a href="flexandro.pdf" target="_blank">
+              <img src="smartA.png" alt="Android QR Code" style="width: 75px; height: 75px; display: block; margin: 0 auto; object-fit: contain;" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Android';">
+            </a>
+            <span style="display: block; font-size: 11px; font-weight: 700; color: #333; margin-top: 4px;">
+              <i class="fa-brands fa-android" style="color: #3DDC84;"></i> Android
+            </span>
+          </div>
+
+          <!-- iOS QR -->
+          <div style="background: #ffffff; padding: 8px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center; flex: 1;">
+            <a href="flexandro.pdf" target="_blank">
+              <img src="smartI.png" alt="iOS QR Code" style="width: 75px; height: 75px; display: block; margin: 0 auto; object-fit: contain;" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=iOS';">
+            </a>
+            <span style="display: block; font-size: 11px; font-weight: 700; color: #333; margin-top: 4px;">
+              <i class="fa-brands fa-apple" style="color: #000;"></i> iOS
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- Slider Script -->
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    const prevBtn = document.getElementById('prevSlide');
+    const nextBtn = document.getElementById('nextSlide');
+    
+    let currentSlide = 0;
+    let slideInterval;
+
+    function showSlide(index) {
+      slides.forEach(slide => slide.classList.remove('active'));
+      dots.forEach(dot => dot.classList.remove('active'));
+      currentSlide = (index + slides.length) % slides.length;
+      slides[currentSlide].classList.add('active');
+      dots[currentSlide].classList.add('active');
+    }
+
+    function nextSlide() { showSlide(currentSlide + 1); }
+    function prevSlide() { showSlide(currentSlide - 1); }
+
+    nextBtn.addEventListener('click', () => { nextSlide(); resetTimer(); });
+    prevBtn.addEventListener('click', () => { prevSlide(); resetTimer(); });
+
+    dots.forEach(dot => {
+      dot.addEventListener('click', (e) => {
+        showSlide(parseInt(e.target.dataset.index));
+        resetTimer();
+      });
+    });
+
+    function startTimer() { slideInterval = setInterval(nextSlide, 5000); }
+    function resetTimer() { clearInterval(slideInterval); startTimer(); }
+
+    startTimer();
+  </script>
+  <!-- Promotional Ads Section -->
+  <section class="ads-section">
+    <h2 class="ads-title">Promotions & Offers</h2>
+    <div class="ads-grid">
+      
+      <!-- Ad 1 -->
+      <div class="ad-card">
+        <a href="#" target="_blank">
+          <img src="Ad1.jpeg" alt="BOC Flex Shift Guide">
+        </a>
+      </div>
+
+      <!-- Ad 2 -->
+      <div class="ad-card">
+        <a href="#" target="_blank">
+          <img src="Ad2.jpeg" alt="My Life My Flex - Win iPhone 16 Pro Max">
+        </a>
+      </div>
+
+      <!-- Ad 3 -->
+      <div class="ad-card">
+        <a href="#" target="_blank">
+          <img src="ad3.jpeg" alt="BOC Flex - Open New Savings Accounts">
+        </a>
+      </div>
+
+      <!-- Ad 4 -->
+      <div class="ad-card">
+        <a href="#" target="_blank">
+          <img src="Ad4.jpeg" alt="Be Smart Be Digital with BOC">
+        </a>
+      </div>
+
+    </div>
+  </section>
+  <!-- Call Centre Section -->
+  <footer class="call-centre-section">
+    <div class="call-centre-container">
+      <h3 class="call-centre-title">Call Centre</h3>
+
+      <!-- Call Centre Logo Badge -->
+      <div class="call-centre-logo">
+        <i class="fa-solid fa-phone-flip call-centre-logo-phone"></i>
+        <div class="call-centre-logo-text">
+          <span class="call-centre-logo-number">1975</span>
+          <span class="call-centre-logo-sub">BOC CALL CENTRE</span>
+        </div>
+      </div>
+
+      <!-- Contact Items -->
+      <div class="contact-list">
+        
+        <!-- Phone Item -->
+        <div class="contact-item">
+          <div class="contact-icon icon-phone">
+            <i class="fa-solid fa-phone"></i>
+          </div>
+          <div class="contact-details">
+            <strong>1975</strong>
+            <span>+94 11 220 4444</span>
+          </div>
+        </div>
+
+        <!-- WhatsApp Item -->
+        <div class="contact-item">
+          <div class="contact-icon icon-whatsapp">
+            <i class="fa-brands fa-whatsapp"></i>
+          </div>
+          <div class="contact-details">
+            <strong>011 220 4444</strong>
+            <span class="contact-subtext">(Text Chat - General Inquiries only)</span>
+          </div>
+        </div>
+
+        <!-- Messenger Item -->
+        <div class="contact-item">
+          <div class="contact-icon icon-messenger">
+            <i class="fa-brands fa-facebook-messenger"></i>
+          </div>
+          <div class="contact-details">
+            <span>via <strong>Bank of Ceylon Facebook page</strong></span>
+            <span class="contact-subtext">(Text Chat)</span>
+          </div>
+        </div>
+
+        <!-- Email Item -->
+        <div class="contact-item">
+          <div class="contact-icon icon-email">
+            <i class="fa-solid fa-envelope"></i>
+          </div>
+          <div class="contact-details">
+            <strong>info@boc.lk</strong>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
